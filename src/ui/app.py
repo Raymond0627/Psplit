@@ -11,6 +11,8 @@ import customtkinter as ctk
 from PIL import Image
 
 from src.core.splitter import PdfSplitter, SplitResult
+from src.core.updater import check_github_update
+from src.ui.update_dialog import UpdateDialog
 
 APP_TITLE = "Lumeed Psplit"
 
@@ -39,8 +41,12 @@ class App(ctk.CTk):
         self.splitter = PdfSplitter()
         self.is_processing = False
         self.last_output_dir = ""
+        self.update_info = None  # (version_tag, release_notes, download_url)
 
         self._build_ui()
+
+        # Check for system updates in the background after 2 seconds
+        self.after(2000, self._check_updates_background)
 
     def _set_app_icon(self):
         ico_path = get_resource_path("icon.ico")
@@ -91,6 +97,20 @@ class App(ctk.CTk):
             text_color="gray"
         )
         subtitle_label.pack(side="left", padx=5, pady=10)
+
+        # Top-Right Update Arrow Button (hidden until an update is detected)
+        self.header_update_btn = ctk.CTkButton(
+            header_frame,
+            text="⬇ Update Available",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            fg_color="#2ECC71",
+            hover_color="#27AE60",
+            text_color="#FFFFFF",
+            height=32,
+            width=150,
+            command=self._on_click_update_btn
+        )
+        # Not packed initially, packed on update detection
 
         # File & Folder Selection Frame
         io_frame = ctk.CTkFrame(self, corner_radius=10)
@@ -331,6 +351,43 @@ class App(ctk.CTk):
         self.progress_label.configure(text="Failed")
         self._log(f"\nERROR: {err_msg}")
         messagebox.showerror("Splitting Failed", f"An error occurred:\n{err_msg}")
+
+    # ================= Update Handling =================
+    def _check_updates_background(self):
+        def _worker():
+            res = check_github_update()
+            if res:
+                tag, notes, url = res
+                self.after(0, self._on_update_found, tag, notes, url)
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_update_found(self, tag: str, notes: str, url: str):
+        self.update_info = (tag, notes, url)
+        self.header_update_btn.configure(text=f"⬇ Update {tag}")
+        self.header_update_btn.pack(side="right", padx=15, pady=10)
+        self._show_update_dialog()
+
+    def _show_update_dialog(self):
+        if not self.update_info:
+            return
+        tag, notes, url = self.update_info
+        # Pass a callback when user clicks 'Remind Me Later' so button remains visible
+        UpdateDialog(
+            parent=self, 
+            new_version=tag, 
+            release_notes=notes, 
+            download_url=url,
+            on_remind_later=self._on_remind_later
+        )
+
+    def _on_remind_later(self):
+        # Keep top-right button packed so user can click it at any time
+        if not self.header_update_btn.winfo_ismapped():
+            self.header_update_btn.pack(side="right", padx=15, pady=10)
+
+    def _on_click_update_btn(self):
+        self._show_update_dialog()
 
 def main():
     app = App()
