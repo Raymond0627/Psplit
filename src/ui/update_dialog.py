@@ -27,16 +27,21 @@ class UpdateDialog(ctk.CTkToplevel):
         self.on_remind_later = on_remind_later
         self.downloader: Optional[UpdateDownloader] = None
         self.is_downloading = False
+        self.on_close_callback = None
 
         self.title("Update Available")
         self.geometry("540x440")
         self.minsize(480, 380)
 
-        # Make modal
+        # Make window singular and non-blocking: no grab_set, so parent stays clickable
         self.transient(parent)
-        self.grab_set()
 
         self._setup_ui()
+        self.protocol("WM_DELETE_WINDOW", self._on_cancel)
+        try:
+            self.focus_force()
+        except Exception:
+            pass
 
     def _setup_ui(self):
         self.grid_columnconfigure(0, weight=1)
@@ -159,4 +164,20 @@ class UpdateDialog(ctk.CTkToplevel):
             self.downloader.cancel()
         if self.on_remind_later:
             self.on_remind_later()
+        try:
+            self.grab_release()
+        except Exception:
+            pass
+        if callable(self.on_close_callback):
+            try:
+                self.on_close_callback()
+            except Exception:
+                pass
         self.destroy()
+
+    def destroy(self):
+        try:
+            self.grab_release()
+        except Exception:
+            pass
+        super().destroy()

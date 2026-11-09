@@ -1,7 +1,7 @@
 ; Script generated for Inno Setup to generate an installer .exe
 [Setup]
 AppName=Lumeed Psplit
-AppVersion=1.0.0
+AppVersion=1.1.0
 DefaultDirName={autopf}\Lumeed Psplit
 DefaultGroupName=Lumeed Psplit
 OutputDir=dist\installer

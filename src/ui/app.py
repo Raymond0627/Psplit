@@ -13,6 +13,9 @@ from PIL import Image
 from src.core.splitter import PdfSplitter, SplitResult
 from src.core.updater import check_github_update
 from src.ui.update_dialog import UpdateDialog
+from src.ui.settings_dialog import SettingsPanel, load_user_config
+from src.ui.icons import arrow_down_icon, gear_icon
+from src.version import __version__
 
 APP_TITLE = "Lumeed Psplit"
 
@@ -38,10 +41,19 @@ class App(ctk.CTk):
         # Set window icon if available
         self._set_app_icon()
 
+        # Load saved user theme preference (System / Dark / Light)
+        config = load_user_config()
+        saved_theme = config.get("appearance_mode", "System")
+        ctk.set_appearance_mode(saved_theme)
+
         self.splitter = PdfSplitter()
         self.is_processing = False
         self.last_output_dir = ""
         self.update_info = None  # (version_tag, release_notes, download_url)
+        self.has_update = False
+        self._settings_panel = None
+        self._update_dialog = None
+        self._icon_cache = {}
 
         self._build_ui()
 
@@ -62,37 +74,83 @@ class App(ctk.CTk):
         self.grid_rowconfigure(3, weight=1)
 
         # Header Title Banner
-        header_frame = ctk.CTkFrame(self, corner_radius=10)
-        header_frame.grid(row=0, column=0, padx=20, pady=(15, 10), sticky="ew")
+        header_frame = ctk.CTkFrame(self, corner_radius=12)
+        header_frame.grid(row=0, column=0, padx=20, pady=(16, 10), sticky="ew")
 
-        title_label = ctk.CTkLabel(
-            header_frame, 
-            text=APP_TITLE, 
+        # Stacked title block on the left
+        title_block = ctk.CTkFrame(header_frame, fg_color="transparent")
+        title_block.pack(side="left", padx=(18, 8), pady=12, anchor="w")
+
+        title_row = ctk.CTkFrame(title_block, fg_color="transparent")
+        title_row.pack(anchor="w")
+
+        ctk.CTkLabel(
+            title_row, text=APP_TITLE,
             font=ctk.CTkFont(size=20, weight="bold")
-        )
-        title_label.pack(side="left", padx=(15, 5), pady=10)
+        ).pack(side="left")
 
-        subtitle_label = ctk.CTkLabel(
-            header_frame, 
-            text="High-Speed In-Memory Splitting (QR & Barcodes)", 
-            font=ctk.CTkFont(size=12),
-            text_color="gray"
-        )
-        subtitle_label.pack(side="left", padx=5, pady=10)
+        ctk.CTkLabel(
+            title_row, text=f"v{__version__}",
+            font=ctk.CTkFont(size=11, weight="bold"),
+            text_color=("gray45", "gray60"),
+            fg_color=("gray88", "gray25"),
+            corner_radius=6,
+            width=44,
+            height=20,
+        ).pack(side="left", padx=(8, 0))
 
-        # Top-Right Update Arrow Button (hidden until an update is detected)
+        ctk.CTkLabel(
+            title_block,
+            text="High-speed in-memory splitting for QR codes & barcodes",
+            font=ctk.CTkFont(size=11),
+            text_color=("gray40", "gray65"),
+            anchor="w",
+        ).pack(anchor="w", pady=(2, 0))
+
+        # Vector icons (never render as '?' on Windows)
+        self._gear_img = ctk.CTkImage(
+            light_image=gear_icon("#374151", 54),
+            dark_image=gear_icon("#D1D5DB", 54),
+            size=(18, 18),
+        )
+        self._arrow_idle_img = ctk.CTkImage(
+            light_image=arrow_down_icon("#6B7280", 54),
+            dark_image=arrow_down_icon("#9CA3AF", 54),
+            size=(18, 18),
+        )
+        self._arrow_active_img = ctk.CTkImage(
+            light_image=arrow_down_icon("#FFFFFF", 54),
+            dark_image=arrow_down_icon("#FFFFFF", 54),
+            size=(18, 18),
+        )
+
+        # Far-Right Settings Gear Button
+        self.header_settings_btn = ctk.CTkButton(
+            header_frame,
+            text="",
+            image=self._gear_img,
+            width=38,
+            height=34,
+            corner_radius=9,
+            fg_color=("gray88", "gray22"),
+            hover_color=("gray78", "gray32"),
+            command=self._toggle_settings_panel,
+        )
+        self.header_settings_btn.pack(side="right", padx=(4, 15), pady=10)
+
+        # Arrow Down Update Button (left of settings): grayscale idle, emerald on update
         self.header_update_btn = ctk.CTkButton(
             header_frame,
-            text="⬇ Update Available",
-            font=ctk.CTkFont(size=12, weight="bold"),
-            fg_color="#2ECC71",
-            hover_color="#27AE60",
-            text_color="#FFFFFF",
-            height=32,
-            width=150,
-            command=self._on_click_update_btn
+            text="",
+            image=self._arrow_idle_img,
+            width=38,
+            height=34,
+            corner_radius=9,
+            fg_color=("gray85", "gray25"),
+            hover_color=("gray75", "gray35"),
+            command=self._on_click_update_btn,
         )
-        # Not packed initially, packed on update detection
+        self.header_update_btn.pack(side="right", padx=(0, 8), pady=10)
 
         # File & Folder Selection Frame
         io_frame = ctk.CTkFrame(self, corner_radius=10)
@@ -346,30 +404,67 @@ class App(ctk.CTk):
 
     def _on_update_found(self, tag: str, notes: str, url: str):
         self.update_info = (tag, notes, url)
-        self.header_update_btn.configure(text=f"⬇ Update {tag}")
-        self.header_update_btn.pack(side="right", padx=15, pady=10)
+        self.has_update = True
+        self.header_update_btn.configure(
+            text=f" {tag}",
+            image=self._arrow_active_img,
+            width=104,
+            fg_color="#10B981",
+            hover_color="#059669",
+            text_color="#FFFFFF",
+        )
         self._show_update_dialog()
 
     def _show_update_dialog(self):
         if not self.update_info:
             return
+        if self._update_dialog is not None and self._update_dialog.winfo_exists():
+            self._update_dialog.lift()
+            self._update_dialog.focus_force()
+            return
         tag, notes, url = self.update_info
-        # Pass a callback when user clicks 'Remind Me Later' so button remains visible
-        UpdateDialog(
-            parent=self, 
-            new_version=tag, 
-            release_notes=notes, 
+        dlg = UpdateDialog(
+            parent=self,
+            new_version=tag,
+            release_notes=notes,
             download_url=url,
-            on_remind_later=self._on_remind_later
+            on_remind_later=self._on_remind_later,
         )
+        dlg.on_close_callback = self._on_update_dialog_closed
+        self._update_dialog = dlg
+
+    def _on_update_dialog_closed(self):
+        self._update_dialog = None
 
     def _on_remind_later(self):
-        # Keep top-right button packed so user can click it at any time
-        if not self.header_update_btn.winfo_ismapped():
-            self.header_update_btn.pack(side="right", padx=15, pady=10)
+        # Keep bright button visible on the left of settings icon so user can click it at any time
+        pass
 
     def _on_click_update_btn(self):
-        self._show_update_dialog()
+        if self.has_update and self.update_info:
+            self._show_update_dialog()
+        else:
+            messagebox.showinfo("Lumeed Psplit", f"You are on the latest version ({__version__}).")
+
+    # ================= Settings Handling (inline, non-modal) =================
+    def _toggle_settings_panel(self):
+        if self._settings_panel is None:
+            self._settings_panel = SettingsPanel(self, on_close=self._on_close_settings_panel)
+            self._settings_panel.place(relx=1.0, rely=0.0, x=-20, y=96, anchor="ne")
+            self._settings_panel.lift()
+        elif self._settings_panel.winfo_manager() == "place":
+            self._on_close_settings_panel()
+        else:
+            self._settings_panel.place(relx=1.0, rely=0.0, x=-20, y=96, anchor="ne")
+            self._settings_panel.lift()
+
+    def _on_close_settings_panel(self):
+        if self._settings_panel is not None:
+            self._settings_panel.place_forget()
+
+    def _open_settings_dialog(self):
+        """Backwards-compatible alias for opening the settings panel."""
+        self._toggle_settings_panel()
 
 def main():
     app = App()
