@@ -15,5 +15,6 @@ def test_app_has_update_attributes():
         assert hasattr(app, "header_update_btn")
         assert hasattr(app, "_check_updates_background")
         assert hasattr(app, "_on_update_found")
+        assert not hasattr(app, "header_logo")  # Header logo image should be removed
     finally:
         app.destroy()

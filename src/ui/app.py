@@ -50,16 +50,9 @@ class App(ctk.CTk):
 
     def _set_app_icon(self):
         ico_path = get_resource_path("icon.ico")
-        png_path = get_resource_path("icon.png")
         if os.path.exists(ico_path):
             try:
                 self.iconbitmap(ico_path)
-            except Exception:
-                pass
-        if os.path.exists(png_path):
-            try:
-                img = tk.PhotoImage(file=png_path)
-                self.iconphoto(False, img)
             except Exception:
                 pass
 
@@ -72,23 +65,12 @@ class App(ctk.CTk):
         header_frame = ctk.CTkFrame(self, corner_radius=10)
         header_frame.grid(row=0, column=0, padx=20, pady=(15, 10), sticky="ew")
 
-        # Load small logo icon into banner if icon.png exists
-        png_path = get_resource_path("icon.png")
-        if os.path.exists(png_path):
-            try:
-                logo_pil = Image.open(png_path).resize((36, 36))
-                self.header_logo = ctk.CTkImage(light_image=logo_pil, dark_image=logo_pil, size=(36, 36))
-                logo_label = ctk.CTkLabel(header_frame, image=self.header_logo, text="")
-                logo_label.pack(side="left", padx=(15, 5), pady=10)
-            except Exception:
-                pass
-        
         title_label = ctk.CTkLabel(
             header_frame, 
             text=APP_TITLE, 
             font=ctk.CTkFont(size=20, weight="bold")
         )
-        title_label.pack(side="left", padx=(10, 5), pady=10)
+        title_label.pack(side="left", padx=(15, 5), pady=10)
 
         subtitle_label = ctk.CTkLabel(
             header_frame, 

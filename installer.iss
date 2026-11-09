@@ -7,14 +7,16 @@ DefaultGroupName=Lumeed Psplit
 OutputDir=dist\installer
 OutputBaseFilename=Lumeed_Psplit_Setup
 SetupIconFile=icon.ico
+UninstallDisplayIcon={app}\icon.ico
 Compression=lzma2
 SolidCompression=yes
 PrivilegesRequired=lowest
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
+Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\Lumeed_Psplit\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
