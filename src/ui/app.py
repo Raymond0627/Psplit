@@ -12,7 +12,7 @@ from PIL import Image
 
 from src.core.splitter import PdfSplitter, SplitResult
 
-APP_TITLE = "Lumeed QSplit"
+APP_TITLE = "Lumeed Psplit"
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")

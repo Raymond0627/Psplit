@@ -35,7 +35,7 @@ def run_cli(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Lumeed QSplit - Super-optimized PDF QR & Barcode Splitter"
+        description="Lumeed Psplit - Super-optimized PDF QR & Barcode Splitter"
     )
     parser.add_argument("input", nargs="?", default=None, help="Input PDF file path (launches GUI if omitted)")
     parser.add_argument("-o", "--output", default="split_output", help="Output directory")

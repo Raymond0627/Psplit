@@ -1,11 +1,11 @@
-; Script generated for Inno Setup (optional, to generate an installer .exe)
+; Script generated for Inno Setup to generate an installer .exe
 [Setup]
-AppName=Lumeed QSplit
+AppName=Lumeed Psplit
 AppVersion=1.0.0
-DefaultDirName={autopf}\Lumeed QSplit
-DefaultGroupName=Lumeed QSplit
+DefaultDirName={autopf}\Lumeed Psplit
+DefaultGroupName=Lumeed Psplit
 OutputDir=dist\installer
-OutputBaseFilename=Lumeed_QSplit_Setup
+OutputBaseFilename=Lumeed_Psplit_Setup
 SetupIconFile=icon.ico
 Compression=lzma2
 SolidCompression=yes
@@ -15,11 +15,11 @@ PrivilegesRequired=lowest
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "dist\Lumeed_QSplit\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\Lumeed_Psplit\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Lumeed QSplit"; Filename: "{app}\Lumeed_QSplit.exe"; IconFilename: "{app}\icon.ico"
-Name: "{autodesktop}\Lumeed QSplit"; Filename: "{app}\Lumeed_QSplit.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
+Name: "{group}\Lumeed Psplit"; Filename: "{app}\Lumeed_Psplit.exe"; IconFilename: "{app}\icon.ico"
+Name: "{autodesktop}\Lumeed Psplit"; Filename: "{app}\Lumeed_Psplit.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
 
 [Run]
-Filename: "{app}\Lumeed_QSplit.exe"; Description: "{cm:LaunchProgram,Lumeed QSplit}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Lumeed_Psplit.exe"; Description: "{cm:LaunchProgram,Lumeed Psplit}"; Flags: nowait postinstall skipifsilent

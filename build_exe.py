@@ -27,7 +27,7 @@ def build():
 
     cmd = [
         sys.executable, "-m", "PyInstaller",
-        "--name=Lumeed_QSplit",
+        "--name=Lumeed_Psplit",
         "--noconfirm",
         "--onedir",
         "--windowed",
@@ -49,8 +49,23 @@ def build():
     if res.returncode == 0:
         print("\n" + "=" * 60)
         print("BUILD SUCCESSFUL!")
-        print("Executable generated in: dist/Lumeed_QSplit/Lumeed_QSplit.exe")
+        print("Executable generated in: dist/Lumeed_Psplit/Lumeed_Psplit.exe")
         print("=" * 60)
+
+        # Look for Inno Setup compiler
+        iscc_paths = [
+            r"C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
+            r"C:\Program Files\Inno Setup 6\ISCC.exe",
+            shutil.which("ISCC.exe") or ""
+        ]
+        iscc = next((p for p in iscc_paths if p and os.path.exists(p)), None)
+        if iscc and os.path.exists("installer.iss"):
+            print("\nFound Inno Setup compiler! Creating setup installer (.exe)...")
+            res_iscc = subprocess.run([iscc, "installer.iss"])
+            if res_iscc.returncode == 0:
+                print("Setup installer created in: dist/installer/Lumeed_Psplit_Setup.exe")
+            else:
+                print("Inno Setup compilation failed with code:", res_iscc.returncode)
     else:
         print("\nBUILD FAILED with returncode:", res.returncode)
 
