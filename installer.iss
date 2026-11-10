@@ -1,11 +1,11 @@
-; Script generated for Inno Setup to generate an installer .exe
+; Script generated for Inno Setup to generate Folio Setup .exe
 [Setup]
-AppName=Lumeed Psplit
-AppVersion=1.1.0
-DefaultDirName={autopf}\Lumeed Psplit
-DefaultGroupName=Lumeed Psplit
+AppName=Folio
+AppVersion=1.2.0
+DefaultDirName={autopf}\Folio
+DefaultGroupName=Folio
 OutputDir=dist\installer
-OutputBaseFilename=Lumeed_Psplit_Setup
+OutputBaseFilename=Folio_Setup
 SetupIconFile=icon.ico
 UninstallDisplayIcon={app}\icon.ico
 Compression=lzma2
@@ -17,11 +17,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\Lumeed_Psplit\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\Folio\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Lumeed Psplit"; Filename: "{app}\Lumeed_Psplit.exe"; IconFilename: "{app}\icon.ico"
-Name: "{autodesktop}\Lumeed Psplit"; Filename: "{app}\Lumeed_Psplit.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
+Name: "{group}\Folio"; Filename: "{app}\Folio.exe"; IconFilename: "{app}\icon.ico"
+Name: "{autodesktop}\Folio"; Filename: "{app}\Folio.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
 
 [Run]
-Filename: "{app}\Lumeed_Psplit.exe"; Description: "{cm:LaunchProgram,Lumeed Psplit}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Folio.exe"; Description: "{cm:LaunchProgram,Folio}"; Flags: nowait postinstall skipifsilent

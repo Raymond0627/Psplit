@@ -1,11 +1,11 @@
-"""Non-modal Settings panel for Lumeed Psplit (theme: System / Dark / Light)."""
+"""Non-modal Settings panel for Folio (theme: Light / Dark / System)."""
 
 import json
 from pathlib import Path
 
 import customtkinter as ctk
 
-CONFIG_FILE = Path.home() / ".lumeed_psplit_config.json"
+CONFIG_FILE = Path.home() / ".folio_config.json"
 
 
 def load_user_config() -> dict:
@@ -32,10 +32,10 @@ class SettingsPanel(ctk.CTkFrame):
     def __init__(self, parent, on_close=None):
         super().__init__(
             parent,
-            corner_radius=12,
+            corner_radius=16,
             border_width=1,
-            fg_color=("gray95", "gray17"),
-            border_color=("gray80", "gray35"),
+            fg_color=("#FFFFFF", "#121A2C"),
+            border_color=("#DCE8FA", "#1E2A42"),
         )
         self.parent = parent
         self._on_close = on_close
@@ -51,28 +51,31 @@ class SettingsPanel(ctk.CTkFrame):
 
         ctk.CTkLabel(
             header, text="Settings",
-            font=ctk.CTkFont(size=15, weight="bold"), anchor="w"
+            font=ctk.CTkFont(size=13, weight="bold"), anchor="w"
         ).grid(row=0, column=0, sticky="w")
 
         ctk.CTkButton(
-            header, text="✕", width=26, height=26, corner_radius=6,
-            fg_color="transparent", hover_color=("gray85", "gray28"),
-            text_color=("gray30", "gray80"), command=self.close
+            header, text="✕", width=22, height=22, corner_radius=11,
+            fg_color="transparent", hover_color=("#EFEFEA", "#262A25"),
+            text_color=("#82877C", "#949A8E"), command=self.close
         ).grid(row=0, column=1, sticky="e")
 
         ctk.CTkLabel(
-            self, text="Appearance", font=ctk.CTkFont(size=12, weight="bold"),
-            anchor="w", text_color=("gray30", "gray75")
-        ).grid(row=1, column=0, padx=16, pady=(8, 4), sticky="w")
+            self, text="Appearance", font=ctk.CTkFont(size=11),
+            anchor="w", text_color=("#82877C", "#949A8E")
+        ).grid(row=1, column=0, padx=16, pady=(6, 4), sticky="w")
 
-        current = self.config.get("appearance_mode", "System")
+        current = self.config.get("appearance_mode", "Light")
         self.theme_var = ctk.StringVar(value=current.capitalize())
 
         self.theme_switch = ctk.CTkSegmentedButton(
             self,
-            values=["System", "Dark", "Light"],
+            values=["Light", "Dark", "System"],
             variable=self.theme_var,
             command=self._on_theme_changed,
+            selected_color="#1677FF",
+            selected_hover_color="#0E5FD9",
+            corner_radius=8,
         )
         self.theme_switch.grid(row=2, column=0, padx=16, pady=(0, 16), sticky="ew")
 

@@ -1,3 +1,3 @@
-"""Version information for Lumeed Psplit."""
-__version__ = "1.1.0"
+"""Version information for Folio."""
+__version__ = "1.2.0"
 GITHUB_REPO = "Raymond0627/Psplit"

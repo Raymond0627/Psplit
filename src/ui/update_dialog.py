@@ -1,4 +1,4 @@
-"""Update Available Dialog for Lumeed Psplit using CustomTkinter."""
+"""Update Available Dialog for Folio using CustomTkinter."""
 
 import threading
 import tkinter as tk
@@ -50,7 +50,7 @@ class UpdateDialog(ctk.CTkToplevel):
         # Header Title
         title_label = ctk.CTkLabel(
             self,
-            text=f"Lumeed Psplit {self.new_version} is available!",
+            text=f"Folio {self.new_version} is available!",
             font=ctk.CTkFont(size=18, weight="bold"),
             anchor="w"
         )
@@ -111,6 +111,8 @@ class UpdateDialog(ctk.CTkToplevel):
             text="Update Now",
             width=140,
             font=ctk.CTkFont(weight="bold"),
+            fg_color="#1677FF",
+            hover_color="#0E5FD9",
             command=self._start_download
         )
         self.update_btn.pack(side="right")

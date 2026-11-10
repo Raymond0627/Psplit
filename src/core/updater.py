@@ -1,4 +1,4 @@
-"""Update checker and downloader for Lumeed Psplit."""
+"""Update checker and downloader for Folio."""
 
 import json
 import os
@@ -41,7 +41,7 @@ def check_github_update(repo: str = GITHUB_REPO, current_ver: str = __version__)
     req = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "LumeedPsplit-Updater",
+            "User-Agent": "Folio-Updater",
             "Accept": "application/vnd.github.v3+json",
         }
     )
@@ -90,11 +90,11 @@ class UpdateDownloader:
     ):
         temp_dir = Path(tempfile.gettempdir())
         clean_tag = re.sub(r'^[vV]', '', self.version_tag)
-        dest_path = temp_dir / f"Lumeed_Psplit_Setup_{clean_tag}.exe"
+        dest_path = temp_dir / f"Folio_Setup_{clean_tag}.exe"
 
         req = urllib.request.Request(
             self.download_url,
-            headers={"User-Agent": "LumeedPsplit-Updater"}
+            headers={"User-Agent": "Folio-Updater"}
         )
 
         try:

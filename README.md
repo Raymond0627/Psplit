@@ -1,22 +1,21 @@
-# Lumeed Psplit (Super-Optimized PDF QR & Barcode Splitter)
+# Folio (Super-Optimized PDF QR & Barcode Separator)
 
-A high-performance Windows desktop application and standalone executable to automatically split multi-page scanned PDF documents using barcode or QR separator sheets (e.g., sheets with `DOCSEP`, QR codes, Code 128, Code 39, etc.).
+A modern, high-performance desktop application and Windows installer to automatically split multi-page scanned PDF documents using barcode or QR separator sheets (e.g. sheets with `DOCSEP`, QR codes, Code 128, Code 39, etc.).
 
-Inspired by `adlerweb/PdfQRSplit`, re-engineered from the ground up for extreme speed, zero disk churn, and an intuitive modern GUI.
+Re-engineered from the ground up for extreme speed, zero disk churn, and a beautiful minimalist interface.
 
 ---
 
-## ⚡ Key Improvements over Original PdfQRSplit
+## ⚡ Key Highlights
 
-| Feature | Original PdfQRSplit | Lumeed Psplit |
-| :--- | :--- | :--- |
-| **Decoding Speed** | Slow Python/Java ZXing wrapper via subprocess | **Native C++ `zxing-cpp`** (20x-50x faster) |
-| **Disk I/O** | Writes intermediate PNG files to disk per page | **100% In-Memory RAM buffer** (Zero disk writes) |
-| **PDF Extraction** | PyPDF4 (broken object references, raster glitches) | **PyMuPDF (MuPDF C engine)** (Lossless, instant range extraction) |
-| **Multi-Core** | Single-threaded | **Parallel Multi-Core page scanning** |
-| **Supported Barcodes** | QR / basic barcodes | **QR Codes, Code 128, Code 39, EAN, DataMatrix** |
-| **Interface** | CLI only | **Modern Desktop GUI + Full CLI support** |
-| **Distribution** | Requires Python, Pip, Java, Pillow | **Standalone Windows `.exe` & Setup Installer** |
+| Feature | Description |
+| :--- | :--- |
+| **Decoding Speed** | **Native C++ `zxing-cpp`** (20x-50x faster, zero disk writes) |
+| **PDF Extraction** | **PyMuPDF (MuPDF C engine)** (Lossless, instant range extraction) |
+| **Multi-Core** | **Parallel multi-core page scanning** |
+| **Supported Barcodes** | **QR Codes, Code 128, Code 39, EAN, DataMatrix** |
+| **Interface** | **Modern minimalist light/dark desktop GUI** + CLI support |
+| **Distribution** | **Standalone Windows `.exe` & Setup Installer** |
 
 ---
 
@@ -25,21 +24,21 @@ Inspired by `adlerweb/PdfQRSplit`, re-engineered from the ground up for extreme 
 ### Option 1: Run Setup Installer (`Setup.exe`)
 Download or run:
 ```
-dist/installer/Lumeed_Psplit_Setup.exe
+dist/installer/Folio_Setup.exe
 ```
-This installs Lumeed Psplit to your computer with a Desktop shortcut and Start Menu entry.
+This installs Folio to your computer with a Desktop shortcut and Start Menu entry.
 
 ### Option 2: Portable Executable
 Run directly without installing:
 ```
-dist/Lumeed_Psplit/Lumeed_Psplit.exe
+dist/Folio/Folio.exe
 ```
 
 ---
 
 ## 🖥️ Using the GUI
 
-1. **Input PDF:** Click **Browse File** to select your multi-page scanned PDF document.
+1. **Input PDF:** Click **Browse** to select your multi-page scanned PDF document.
 2. **Output Folder:** Select the destination directory (defaults to `split_output/` next to your PDF).
 3. **Separator Text:** Enter your separator keyword (e.g. `DOCSEP`).
 4. **Match Type:**
@@ -47,13 +46,13 @@ dist/Lumeed_Psplit/Lumeed_Psplit.exe
    - `exact`: Exact match.
    - `regex`: Custom regular expression pattern.
 5. **Separator Page Handling:**
-   - **`discard`** *(Default)*: Separator sheets are excluded from output documents.
-   - **`keep_prev`**: Separator sheet is retained at the end of the preceding document.
-   - **`keep_next`**: Separator sheet is retained at the beginning of the following document.
+   - **`Discard`** *(Default)*: Separator sheets are excluded from output documents.
+   - **`Keep previous`**: Separator sheet is retained at the end of the preceding document.
+   - **`Keep next`**: Separator sheet is retained at the beginning of the following document.
 6. **Naming Pattern:** Customize file names with format tokens:
    - `{original_name}_part_{index:03d}`
    - Supported variables: `{original_name}`, `{index}`, `{total_splits}`, `{start_page}`, `{end_page}`.
-7. Click **Start Splitting**. View real-time progress and logs, then click **Open Output Folder**.
+7. Click **Start splitting**. View real-time progress, then click **Open folder**.
 
 ---
 
@@ -62,22 +61,8 @@ dist/Lumeed_Psplit/Lumeed_Psplit.exe
 The tool can also be run directly from PowerShell or Command Prompt for automated batch processing:
 
 ```powershell
-# Using the python script:
 python main.py input.pdf -s DOCSEP -m discard -o ./output
-
-# Or with custom pattern and match type:
-python main.py input.pdf -s "DOCSEP" --match exact --pattern "{original_name}_doc_{index:02d}"
 ```
-
-CLI Arguments:
-- `input`: Path to input PDF file.
-- `-o, --output`: Output directory (default: `split_output`).
-- `-s, --separator`: Separator text (default: `DOCSEP`).
-- `-m, --mode`: Separator page handling (`discard`, `keep_prev`, `keep_next`).
-- `--match`: Barcode matching method (`contains`, `exact`, `regex`).
-- `--pattern`: Output filename template.
-- `--dpi`: Rendering DPI for barcode detection (default: `150`).
-- `-q, --quiet`: Quiet mode.
 
 ---
 
@@ -100,5 +85,5 @@ python -m pytest tests/ -v
 python build_exe.py
 ```
 This generates:
-- Standalone folder: `dist/Lumeed_Psplit/Lumeed_Psplit.exe`
-- Setup wizard installer: `dist/installer/Lumeed_Psplit_Setup.exe`
+- Standalone folder: `dist/Folio/Folio.exe`
+- Setup wizard installer: `dist/installer/Folio_Setup.exe`

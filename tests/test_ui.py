@@ -11,12 +11,26 @@ def app():
 
 
 def test_app_title_constant():
-    assert APP_TITLE == "Lumeed Psplit"
+    assert APP_TITLE == "Folio"
 
 
 def test_icon_exists():
     assert os.path.exists("icon.ico")
     assert os.path.exists("icon.png")
+
+
+def test_consistent_minimal_control_metrics(app):
+    # One design system matching reference: 32px round icon buttons, 36px pill inputs, 36px action pills
+    assert app.header_update_btn.cget("width") == 32
+    assert app.header_update_btn.cget("height") == 32
+    assert app.header_settings_btn.cget("width") == 32
+    assert app.header_settings_btn.cget("height") == 32
+    assert app.start_btn.cget("height") == 36
+    assert app.open_btn.cget("height") == 36
+    assert app.pdf_entry.cget("height") == 36
+    assert app.out_entry.cget("height") == 36
+    assert app.sep_entry.cget("height") == 36
+    assert app.pattern_entry.cget("height") == 36
 
 
 def test_header_buttons_use_vector_images(app):
@@ -30,7 +44,7 @@ def test_header_buttons_use_vector_images(app):
 def test_arrow_button_visible_and_idle_grayscale(app):
     assert app.has_update is False
     assert app.header_update_btn.winfo_manager() == "pack"
-    assert app.header_update_btn.cget("fg_color") == ("gray85", "gray25")
+    assert app.header_update_btn.cget("fg_color") == "transparent"
 
 
 def test_update_found_turns_button_emerald(app):
@@ -38,7 +52,7 @@ def test_update_found_turns_button_emerald(app):
     try:
         assert app.has_update is True
         assert "v1.2.0" in app.header_update_btn.cget("text")
-        assert app.header_update_btn.cget("fg_color") == "#10B981"
+        assert app.header_update_btn.cget("fg_color") == "#1677FF"
     finally:
         if app._update_dialog is not None and app._update_dialog.winfo_exists():
             app._update_dialog._on_cancel()
@@ -46,8 +60,8 @@ def test_update_found_turns_button_emerald(app):
         app.has_update = False
         app.update_info = None
         app.header_update_btn.configure(
-            text="", image=app._arrow_idle_img, width=38,
-            fg_color=("gray85", "gray25"), hover_color=("gray75", "gray35"),
+            text="", image=app._arrow_idle_img, width=32,
+            fg_color="transparent", hover_color=("#DCE8FA", "#1E2A42"),
         )
 
 

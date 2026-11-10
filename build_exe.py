@@ -27,7 +27,7 @@ def build():
 
     cmd = [
         sys.executable, "-m", "PyInstaller",
-        "--name=Lumeed_Psplit",
+        "--name=Folio",
         "--noconfirm",
         "--onedir",
         "--windowed",
@@ -49,7 +49,7 @@ def build():
     if res.returncode == 0:
         print("\n" + "=" * 60)
         print("BUILD SUCCESSFUL!")
-        print("Executable generated in: dist/Lumeed_Psplit/Lumeed_Psplit.exe")
+        print("Executable generated in: dist/Folio/Folio.exe")
         print("=" * 60)
 
         # Look for Inno Setup compiler
@@ -63,7 +63,7 @@ def build():
             print("\nFound Inno Setup compiler! Creating setup installer (.exe)...")
             res_iscc = subprocess.run([iscc, "installer.iss"])
             if res_iscc.returncode == 0:
-                print("Setup installer created in: dist/installer/Lumeed_Psplit_Setup.exe")
+                print("Setup installer created in: dist/installer/Folio_Setup.exe")
             else:
                 print("Inno Setup compilation failed with code:", res_iscc.returncode)
     else:
